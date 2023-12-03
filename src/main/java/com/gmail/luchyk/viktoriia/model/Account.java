@@ -13,4 +13,5 @@ public class Account {
     private int id;
     private double amount;
     private String type;
+    private User user;
 }

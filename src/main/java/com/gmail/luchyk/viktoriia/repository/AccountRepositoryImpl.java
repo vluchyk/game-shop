@@ -1,9 +1,13 @@
 package com.gmail.luchyk.viktoriia.repository;
 
 import com.gmail.luchyk.viktoriia.model.Account;
+import com.gmail.luchyk.viktoriia.model.User;
 import com.gmail.luchyk.viktoriia.repository.dao.AccountRepository;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class AccountRepositoryImpl implements AccountRepository {
@@ -38,21 +42,72 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public Optional<Account> create(Account account) {
-        return Optional.empty();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            preparedStatement.setDouble(1, account.getAmount());
+            preparedStatement.setString(2, account.getType());
+            preparedStatement.setInt(3, account.getUser().getId());
+            preparedStatement.executeUpdate();
+
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            generatedKeys.next();
+            account.setId(generatedKeys.getInt(1));
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e); // todo
+        }
+        return Optional.ofNullable(account);
     }
 
     @Override
     public Optional<Account> read(int id) {
-        return Optional.empty();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(READ)){
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            Optional<User> user = new UserRepositoryImpl(connection).read(resultSet.getInt("user_id"));
+
+            Account account = Account.builder()
+                    .id(resultSet.getInt("id"))
+                    .amount(resultSet.getDouble("amount"))
+                    .type(resultSet.getString("type"))
+                    .user(user.orElse(null))
+                    .build();
+
+            return Optional.ofNullable(account);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e); // todo
+        }
     }
 
     @Override
     public int update(Account account) {
-        return 0;
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
+
+            preparedStatement.setDouble(1, account.getAmount());
+            preparedStatement.setString(2, account.getType());
+            preparedStatement.setInt(3, account.getUser().getId());
+
+            return preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e); // todo
+        }
     }
 
     @Override
     public boolean delete(int id) {
-        return false;
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
+            preparedStatement.setInt(1, id);
+
+            return preparedStatement.execute();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e); // todo
+        }
     }
 }

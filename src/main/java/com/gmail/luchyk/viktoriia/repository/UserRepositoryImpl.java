@@ -55,7 +55,7 @@ public class UserRepositoryImpl implements UserRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e); // todo
         }
-        return Optional.of(user);
+        return Optional.ofNullable(user);
     }
 
     @Override
@@ -65,13 +65,14 @@ public class UserRepositoryImpl implements UserRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             User user = User.builder()
+                    .id(resultSet.getInt("id"))
                     .login(resultSet.getString("name"))
                     .fullName(resultSet.getString("nickname"))
                     .birthDate(resultSet.getDate("birthdate").toLocalDate())
                     .password(resultSet.getString("password"))
                     .build();
 
-            return Optional.of(user);
+            return Optional.ofNullable(user);
 
         } catch (SQLException e) {
             throw new RuntimeException(e); // todo
@@ -87,6 +88,7 @@ public class UserRepositoryImpl implements UserRepository {
             preparedStatement.setDate(3, Date.valueOf(user.getBirthDate()));
             preparedStatement.setString(4, user.getPassword());
             preparedStatement.setInt(5, user.getId());
+
             return preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -99,11 +101,11 @@ public class UserRepositoryImpl implements UserRepository {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
             preparedStatement.setInt(1, id);
-            preparedStatement.execute();
+
+            return preparedStatement.execute();
+
         } catch (SQLException e) {
             throw new RuntimeException(e); // todo
         }
-
-        return false;
     }
 }
