@@ -62,7 +62,9 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public Optional<Account> read(int id) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(READ)){
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(READ);
+
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 

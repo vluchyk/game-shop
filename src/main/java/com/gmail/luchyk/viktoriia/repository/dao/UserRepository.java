@@ -12,4 +12,7 @@ public interface UserRepository {
     int update(User user);
 
     boolean delete(int id);
+
+    boolean existNickname(User user);
+    boolean exist(User user);
 }

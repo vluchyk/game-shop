@@ -18,7 +18,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     private static final String READ =
             """
-                SELECT * FROM public.users WHERE id = ?;
+                SELECT * FROM public.users 
+                WHERE id = ?;
             """;
 
     private static final String UPDATE =
@@ -32,6 +33,18 @@ public class UserRepositoryImpl implements UserRepository {
             """
                 DELETE FROM public.users WHERE id = ?;
             """;
+
+    private static final String READ_BY_NICKNAME =
+            """
+                SELECT * FROM public.users
+                WHERE nickname = ?;
+            """;
+
+    private static final String READ_BY_NICKNAME_PASSWORD =
+            """
+                SELECT * FROM public.users
+                WHERE nickname = ? and password = ?;
+            """;
     public UserRepositoryImpl(Connection connection) {
         this.connection = connection;
     }
@@ -42,8 +55,8 @@ public class UserRepositoryImpl implements UserRepository {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS);
 
-            preparedStatement.setString(1, user.getLogin());
-            preparedStatement.setString(2, user.getFullName());
+            preparedStatement.setString(1, user.getFullName());
+            preparedStatement.setString(2, user.getLogin());
             preparedStatement.setDate(3, Date.valueOf(user.getBirthDate()));
             preparedStatement.setString(4, user.getPassword());
             preparedStatement.executeUpdate();
@@ -60,7 +73,8 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> read(int id) {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(READ)) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(READ);
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -103,6 +117,39 @@ public class UserRepositoryImpl implements UserRepository {
             preparedStatement.setInt(1, id);
 
             return preparedStatement.execute();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e); // todo
+        }
+    }
+
+    @Override
+    public boolean existNickname(User user) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NICKNAME);
+
+            preparedStatement.setString(1, user.getLogin());
+            //return preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) return true;
+            else return false;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e); // todo
+        }
+    }
+
+    @Override
+    public boolean exist(User user) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NICKNAME_PASSWORD);
+
+            preparedStatement.setString(1, user.getLogin());
+            preparedStatement.setString(2, user.getPassword());
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) return true;
+            else return false;
 
         } catch (SQLException e) {
             throw new RuntimeException(e); // todo

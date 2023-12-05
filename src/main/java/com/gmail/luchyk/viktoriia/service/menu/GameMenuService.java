@@ -1,6 +1,7 @@
-package com.gmail.luchyk.viktoriia.service;
+package com.gmail.luchyk.viktoriia.service.menu;
 
 import com.gmail.luchyk.viktoriia.enums.GameMenu;
+import com.gmail.luchyk.viktoriia.enums.Message;
 import lombok.AllArgsConstructor;
 
 import java.util.Arrays;
@@ -15,11 +16,11 @@ public class GameMenuService {
     }
 
     public void view() {
-        System.out.println("Available games are: ");
+        System.out.println(Message.AVAILABLE_GAMES.getMessage());
     }
 
     public String buy() {
-        System.out.println("Enter the name of the game you want to buy: ");
+        System.out.println(Message.GAME_TO_BUY.getMessage());
         return scanner.next();
     }
 }

@@ -1,6 +1,7 @@
-package com.gmail.luchyk.viktoriia.service;
+package com.gmail.luchyk.viktoriia.service.menu;
 
 import com.gmail.luchyk.viktoriia.enums.AccountMenu;
+import com.gmail.luchyk.viktoriia.enums.Message;
 import lombok.AllArgsConstructor;
 
 import java.util.Arrays;
@@ -15,11 +16,11 @@ public class AccountMenuService {
     }
 
     public void view() {
-        System.out.println("User account: ");
+        System.out.println(Message.USER_ACCOUNT.getMessage());
     }
 
     public double replenish() {
-        System.out.println("Enter the amount to top up the account: ");
+        System.out.println(Message.TOP_UP_ACCOUNT.getMessage());
         return scanner.nextDouble();
     }
 }
