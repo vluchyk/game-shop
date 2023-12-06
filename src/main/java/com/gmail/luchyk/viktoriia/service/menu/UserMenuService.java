@@ -4,6 +4,7 @@ import com.gmail.luchyk.viktoriia.enums.Message;
 import com.gmail.luchyk.viktoriia.enums.UserMenu;
 import com.gmail.luchyk.viktoriia.model.User;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 @AllArgsConstructor
+@Data
 public class UserMenuService {
     private Scanner scanner;
 

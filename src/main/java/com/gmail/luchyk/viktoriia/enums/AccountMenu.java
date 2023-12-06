@@ -6,8 +6,10 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum AccountMenu {
-    VIEW("View User Accounts (V)", "v"),
-    REPLENISHMENT("Replenishment (R)", "r");
+    CREATE("Create (C)", "c"),
+    VIEW("View (V)", "v"),
+    REPLENISHMENT("Top Up (U)", "u"),
+    NEXT("Next (N)", "n");
 
     private String action;
     private String command;

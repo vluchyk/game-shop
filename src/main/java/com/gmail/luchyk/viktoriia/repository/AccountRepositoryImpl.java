@@ -36,6 +36,11 @@ public class AccountRepositoryImpl implements AccountRepository {
                 DELETE FROM public.accounts WHERE id = ?;
             """;
 
+    private static final String READ_BY_USER =
+            """
+                SELECT * FROM public.accounts WHERE user_id = ?;
+            """;
+
     public AccountRepositoryImpl(Connection connection) {
         this.connection = connection;
     }
@@ -67,6 +72,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
 
             Optional<User> user = new UserRepositoryImpl(connection).read(resultSet.getInt("user_id"));
 
@@ -92,6 +98,7 @@ public class AccountRepositoryImpl implements AccountRepository {
             preparedStatement.setDouble(1, account.getAmount());
             preparedStatement.setString(2, account.getType());
             preparedStatement.setInt(3, account.getUser().getId());
+            preparedStatement.setInt(4, account.getId());
 
             return preparedStatement.executeUpdate();
 
@@ -107,6 +114,43 @@ public class AccountRepositoryImpl implements AccountRepository {
             preparedStatement.setInt(1, id);
 
             return preparedStatement.execute();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e); // todo
+        }
+    }
+
+    @Override
+    public boolean exist(Account account) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_USER);
+            preparedStatement.setInt(1, account.getUser().getId());
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e); // todo
+        }
+    }
+
+    @Override
+    public Optional<Account> readByUser(User user) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_USER);
+
+            preparedStatement.setInt(1, user.getId());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+
+            Account account = Account.builder()
+                    .id(resultSet.getInt("id"))
+                    .amount(resultSet.getDouble("amount"))
+                    .type(resultSet.getString("type"))
+                    .user(user)
+                    .build();
+
+            return Optional.ofNullable(account);
 
         } catch (SQLException e) {
             throw new RuntimeException(e); // todo

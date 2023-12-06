@@ -55,10 +55,11 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
             PreparedStatement preparedStatement = connection.prepareStatement(READ);
             preparedStatement.setInt(1, user.getId());
             ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
 
             Purchase purchase = Purchase.builder()
                     .user(user)
-//                    .game()
+//                    .game() // todo
                     .build();
 
             return Optional.ofNullable(purchase);

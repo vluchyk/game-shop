@@ -5,7 +5,8 @@ CREATE TABLE public.users
     nickname character varying(32),
     birthday timestamp without time zone,
     password character varying(32),
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    CONSTRAINT nickname_unique UNIQUE (nickname)
 );
 
 CREATE TABLE public.games
@@ -36,6 +37,7 @@ CREATE TABLE public.accounts
     type character varying(32),
     user_id bigint,
     PRIMARY KEY (id),
+    CONSTRAINT user_id_unique UNIQUE (user_id),
     CONSTRAINT user_id FOREIGN KEY (user_id)
         REFERENCES public.users (id) MATCH SIMPLE
 );

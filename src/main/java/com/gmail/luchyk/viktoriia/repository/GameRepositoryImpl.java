@@ -66,6 +66,7 @@ public class GameRepositoryImpl implements GameRepository {
 
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
 
             Game game = Game.builder()
                     .id(resultSet.getInt("id"))

@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum UserMenu {
     REGISTER("Register (R)", "r"),
     SIGNIN("Sign In (I)", "i"),
-    SIGNOUT("Sign Out (O)", "o"),
+ //   SIGNOUT("Sign Out (O)", "o"),
     EXIT("Exit (E)", "e");
 
     private String action;

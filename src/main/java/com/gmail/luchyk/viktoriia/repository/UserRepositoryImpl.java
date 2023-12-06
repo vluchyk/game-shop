@@ -77,12 +77,13 @@ public class UserRepositoryImpl implements UserRepository {
             PreparedStatement preparedStatement = connection.prepareStatement(READ);
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
 
             User user = User.builder()
                     .id(resultSet.getInt("id"))
                     .login(resultSet.getString("name"))
                     .fullName(resultSet.getString("nickname"))
-                    .birthDate(resultSet.getDate("birthdate").toLocalDate())
+                    .birthDate(resultSet.getDate("birthday").toLocalDate())
                     .password(resultSet.getString("password"))
                     .build();
 
@@ -124,15 +125,14 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean existNickname(User user) {
+    public boolean existLogin(User user) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NICKNAME);
 
             preparedStatement.setString(1, user.getLogin());
             //return preparedStatement.execute();
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) return true;
-            else return false;
+            return resultSet.next();
 
         } catch (SQLException e) {
             throw new RuntimeException(e); // todo
@@ -148,8 +148,30 @@ public class UserRepositoryImpl implements UserRepository {
             preparedStatement.setString(2, user.getPassword());
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) return true;
-            else return false;
+            return resultSet.next();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e); // todo
+        }
+    }
+
+    @Override
+    public Optional<User> readByLogin(String login) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NICKNAME);
+            preparedStatement.setString(1, login);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+
+            User user = User.builder()
+                    .id(resultSet.getInt("id"))
+                    .login(resultSet.getString("name"))
+                    .fullName(resultSet.getString("nickname"))
+                    .birthDate(resultSet.getDate("birthday").toLocalDate())
+                    .password(resultSet.getString("password"))
+                    .build();
+
+            return Optional.ofNullable(user);
 
         } catch (SQLException e) {
             throw new RuntimeException(e); // todo
