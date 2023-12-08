@@ -25,7 +25,7 @@ public class AccountService {
             if (this.accountRepository.exist(account))
                 System.out.println(Message.ACCOUNT_EXISTS.getMessage());
             else {
-                this.account = this.accountRepository.create(account).orElseThrow();
+                this.account = this.accountRepository.create(account).orElseThrow(); // todo
                 System.out.println(Message.ACCOUNT_CREATED_SUCCESSFULLY.getMessage());
             }
         } while (this.accountRepository.exist(account));
@@ -33,13 +33,13 @@ public class AccountService {
 
     public void view() {
         this.accountMenuService.view();
-        Account account = this.accountRepository.readByUser(this.accountMenuService.getUser()).orElseThrow();
-        System.out.println(account);
+        this.account = this.accountRepository.readByUser(this.accountMenuService.getUser()).orElseThrow(); // todo
+        System.out.println(this.account);
     }
 
     public void topUp() {
         double increaseBy = this.accountMenuService.topUp();
-        this.account = this.accountRepository.readByUser(this.accountMenuService.getUser()).orElseThrow();
+        this.account = this.accountRepository.readByUser(this.accountMenuService.getUser()).orElseThrow(); // todo
         this.account.setAmount(this.account.getAmount() + increaseBy);
         this.accountRepository.update(this.account);
         System.out.println(Message.ACCOUNT_TOPPED_UP_SUCCESSFULLY.getMessage());
@@ -47,5 +47,6 @@ public class AccountService {
 
     public void next() {
         this.accountMenuService.next();
+        this.account = this.accountRepository.readByUser(this.accountMenuService.getUser()).orElseThrow(); // todo
     }
 }

@@ -26,7 +26,7 @@ public class UserMenuService {
         builder.fullName(scanner.next());
         System.out.print(Message.USERNAME.getMessage());
         builder.login(scanner.next());
-        System.out.print(Message.USER_BIRTH_DAY);
+        System.out.print(Message.USER_BIRTH_DAY.getMessage());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         builder.birthDate(LocalDate.parse(scanner.next(), formatter));
         System.out.print(Message.USER_PASSWORD.getMessage());

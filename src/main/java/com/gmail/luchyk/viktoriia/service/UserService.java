@@ -24,7 +24,7 @@ public class UserService {
             if (this.userRepository.existLogin(user))
                 System.out.println(Message.USERNAME_EXISTS.getMessage());
             else {
-                this.user = this.userRepository.create(user).orElseThrow();
+                this.user = this.userRepository.create(user).orElseThrow(); // todo
                 System.out.println(Message.USER_REGISTERED_SUCCESSFULLY.getMessage());
                 break;
             }
@@ -37,7 +37,7 @@ public class UserService {
             user = this.userMenuService.signIn();
             if (this.userRepository.exist(user)) {
                 System.out.println(Message.WELCOME.getMessage());
-                this.user = this.userRepository.readByLogin(user.getLogin()).orElseThrow();
+                this.user = this.userRepository.readByLogin(user.getLogin()).orElseThrow(); // todo
             }
             else {
                 System.out.println(Message.USERNAME_PASSWORD_INCORRECT.getMessage());

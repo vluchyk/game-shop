@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum Message {
     MAIN_MENU("Main Menu: "),
     ACCOUNT_MENU("Account Menu: "),
+    GAME_MENU("Game Menu: "),
 
     WHAT_TO_DO("What do you want to do?"),
     WELCOME("Welcome!"),
@@ -27,8 +28,12 @@ public enum Message {
     ACCOUNT_EXISTS("An account already exists in the system."),
     ACCOUNT_CREATED_SUCCESSFULLY("The account is successfully created."),
     ACCOUNT_TOPPED_UP_SUCCESSFULLY("The account is successfully topped up."),
+    ACCOUNT_NEED_CREATE("Please, create an account for the current user."),
+    ACCOUNT_NOT_ENOUGH_MONEY("There is not enough money in the account."),
 
     AVAILABLE_GAMES("Available games are: "),
+    MY_GAMES("My games are: "),
+    NO_GAMES("None"),
     GAME_TO_BUY("Enter the name of the game you want to buy: "),
 
     LOGOUT("Are you sure you want to log out? (Y/N)");

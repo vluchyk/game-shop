@@ -37,6 +37,5 @@ public class AccountMenuService {
     }
 
     public void next() {
-        System.out.println("");
     }
 }

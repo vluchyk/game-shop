@@ -62,7 +62,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e); // todo
         }
-        return Optional.ofNullable(account);
+        return Optional.of(account);
     }
 
     @Override
@@ -141,14 +141,16 @@ public class AccountRepositoryImpl implements AccountRepository {
 
             preparedStatement.setInt(1, user.getId());
             ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-
-            Account account = Account.builder()
-                    .id(resultSet.getInt("id"))
-                    .amount(resultSet.getDouble("amount"))
-                    .type(resultSet.getString("type"))
-                    .user(user)
-                    .build();
+            Account account = null;
+            
+            if (resultSet.next()) {
+                account = Account.builder()
+                        .id(resultSet.getInt("id"))
+                        .amount(resultSet.getDouble("amount"))
+                        .type(resultSet.getString("type"))
+                        .user(user)
+                        .build();
+            }
 
             return Optional.ofNullable(account);
 

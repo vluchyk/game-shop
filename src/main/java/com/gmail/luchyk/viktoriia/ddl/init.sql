@@ -17,7 +17,8 @@ CREATE TABLE public.games
     rating bigint,
     cost double precision,
     description character varying(255),
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    CONSTRAINT name_unique UNIQUE (name)
 );
 
 CREATE TABLE public.aux_user_game
