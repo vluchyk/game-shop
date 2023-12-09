@@ -48,7 +48,7 @@ public class GameRepositoryImpl implements GameRepository {
 
     private static final String READ_BY_USER =
             """
-                    SELECT * FROM public.aux_user_game u2g 
+                    SELECT * FROM public.aux_user_game u2g
                     INNER JOIN public.games g ON g.id = u2g.game_id
                     WHERE u2g.user_id = ?;
                     """;
@@ -61,7 +61,6 @@ public class GameRepositoryImpl implements GameRepository {
     public Optional<Game> create(Game game) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS);
-
             preparedStatement.setString(1, game.getName());
             preparedStatement.setDate(2, Date.valueOf(game.getReleased()));
             preparedStatement.setInt(3, game.getRating());
@@ -74,41 +73,41 @@ public class GameRepositoryImpl implements GameRepository {
             game.setId(generatedKeys.getInt(1));
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
         }
         return Optional.of(game);
     }
 
     @Override
     public Optional<Game> read(int id) {
+        Game game = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(READ);
-
             preparedStatement.setInt(1, id);
+
             ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-
-            Game game = Game.builder()
-                    .id(resultSet.getInt("id"))
-                    .name(resultSet.getString("name"))
-                    .released(resultSet.getDate("release_date").toLocalDate())
-                    .rating(resultSet.getInt("rating"))
-                    .cost(resultSet.getDouble("cost"))
-                    .description(resultSet.getString("description"))
-                    .build();
-
-            return Optional.ofNullable(game);
+            if (resultSet.next()) {
+                game = Game.builder()
+                        .id(resultSet.getInt("id"))
+                        .name(resultSet.getString("name"))
+                        .released(resultSet.getDate("release_date").toLocalDate())
+                        .rating(resultSet.getInt("rating"))
+                        .cost(resultSet.getDouble("cost"))
+                        .description(resultSet.getString("description"))
+                        .build();
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
         }
+
+        return Optional.ofNullable(game);
     }
 
     @Override
     public int update(Game game) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
-
             preparedStatement.setString(1, game.getName());
             preparedStatement.setDate(2, Date.valueOf(game.getReleased()));
             preparedStatement.setInt(3, game.getRating());
@@ -118,7 +117,8 @@ public class GameRepositoryImpl implements GameRepository {
             return preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
+            return 0;
         }
     }
 
@@ -126,21 +126,21 @@ public class GameRepositoryImpl implements GameRepository {
     public boolean delete(int id) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
-
             preparedStatement.setInt(1, id);
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
+            return false;
         }
         return false;
     }
 
     @Override
     public List<Game> readAll() {
+        List<Game> games = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(READ_ALL);
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            List<Game> games = new ArrayList<>();
             while (resultSet.next()) {
                 games.add(Game.builder()
                         .id(resultSet.getInt("id"))
@@ -152,21 +152,21 @@ public class GameRepositoryImpl implements GameRepository {
                         .build());
             }
 
-            return games;
-
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
         }
+
+        return games;
     }
 
     @Override
     public List<Game> readBy(User user) {
+        List<Game> games = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_USER);
             preparedStatement.setInt(1, user.getId());
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            List<Game> games = new ArrayList<>();
             while (resultSet.next()) {
                 games.add(Game.builder()
                         .id(resultSet.getInt("id"))
@@ -178,19 +178,18 @@ public class GameRepositoryImpl implements GameRepository {
                         .build());
             }
 
-            return games;
-
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
         }
+        return games;
     }
 
     @Override
     public Optional<Game> readByName(String name) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NAME);
-
             preparedStatement.setString(1, name);
+
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return Optional.of(Game.builder()
@@ -205,7 +204,7 @@ public class GameRepositoryImpl implements GameRepository {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
         }
         return Optional.empty();
     }

@@ -18,7 +18,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     private static final String READ =
             """
-                SELECT * FROM public.users 
+                SELECT * FROM public.users
                 WHERE id = ?;
             """;
 
@@ -54,7 +54,6 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> create(User user) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS);
-
             preparedStatement.setString(1, user.getFullName());
             preparedStatement.setString(2, user.getLogin());
             preparedStatement.setDate(3, Date.valueOf(user.getBirthDate()));
@@ -66,32 +65,33 @@ public class UserRepositoryImpl implements UserRepository {
             user.setId(generatedKeys.getInt(1));
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
         }
         return Optional.ofNullable(user);
     }
 
     @Override
     public Optional<User> read(int id) {
+        User user = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(READ);
             preparedStatement.setInt(1, id);
+
             ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-
-            User user = User.builder()
-                    .id(resultSet.getInt("id"))
-                    .login(resultSet.getString("name"))
-                    .fullName(resultSet.getString("nickname"))
-                    .birthDate(resultSet.getDate("birthday").toLocalDate())
-                    .password(resultSet.getString("password"))
-                    .build();
-
-            return Optional.ofNullable(user);
+            if (resultSet.next()) {
+                user = User.builder()
+                        .id(resultSet.getInt("id"))
+                        .login(resultSet.getString("name"))
+                        .fullName(resultSet.getString("nickname"))
+                        .birthDate(resultSet.getDate("birthday").toLocalDate())
+                        .password(resultSet.getString("password"))
+                        .build();
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
         }
+        return Optional.ofNullable(user);
     }
 
     @Override
@@ -107,7 +107,8 @@ public class UserRepositoryImpl implements UserRepository {
             return preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
+            return 0;
         }
     }
 
@@ -120,7 +121,8 @@ public class UserRepositoryImpl implements UserRepository {
             return preparedStatement.execute();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
@@ -128,14 +130,14 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean existLogin(User user) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NICKNAME);
-
             preparedStatement.setString(1, user.getLogin());
-            //return preparedStatement.execute();
+
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.next();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
@@ -143,7 +145,6 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean exist(User user) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NICKNAME_PASSWORD);
-
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getPassword());
 
@@ -151,30 +152,33 @@ public class UserRepositoryImpl implements UserRepository {
             return resultSet.next();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
     @Override
     public Optional<User> readByLogin(String login) {
+        User user = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NICKNAME);
             preparedStatement.setString(1, login);
+
             ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-
-            User user = User.builder()
-                    .id(resultSet.getInt("id"))
-                    .login(resultSet.getString("name"))
-                    .fullName(resultSet.getString("nickname"))
-                    .birthDate(resultSet.getDate("birthday").toLocalDate())
-                    .password(resultSet.getString("password"))
-                    .build();
-
-            return Optional.ofNullable(user);
+            if (resultSet.next()) {
+                user = User.builder()
+                        .id(resultSet.getInt("id"))
+                        .login(resultSet.getString("name"))
+                        .fullName(resultSet.getString("nickname"))
+                        .birthDate(resultSet.getDate("birthday").toLocalDate())
+                        .password(resultSet.getString("password"))
+                        .build();
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
         }
+
+        return Optional.ofNullable(user);
     }
 }

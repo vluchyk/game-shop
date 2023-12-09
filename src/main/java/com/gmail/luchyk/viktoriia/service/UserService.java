@@ -1,6 +1,7 @@
 package com.gmail.luchyk.viktoriia.service;
 
 import com.gmail.luchyk.viktoriia.enums.Message;
+import com.gmail.luchyk.viktoriia.exception.UserException;
 import com.gmail.luchyk.viktoriia.model.User;
 import com.gmail.luchyk.viktoriia.repository.dao.UserRepository;
 import com.gmail.luchyk.viktoriia.service.menu.UserMenuService;
@@ -24,9 +25,16 @@ public class UserService {
             if (this.userRepository.existLogin(user))
                 System.out.println(Message.USERNAME_EXISTS.getMessage());
             else {
-                this.user = this.userRepository.create(user).orElseThrow(); // todo
-                System.out.println(Message.USER_REGISTERED_SUCCESSFULLY.getMessage());
-                break;
+                try {
+                    this.user = this.userRepository
+                            .create(user)
+                            .orElseThrow(() -> new UserException(Message.USER_NOT_CREATED.getMessage()));
+                    System.out.println(Message.USER_REGISTERED_SUCCESSFULLY.getMessage());
+                    break;
+                } catch (UserException e) {
+                    System.out.println(e);
+                    System.out.println(Message.TRY_AGAIN.getMessage());
+                }
             }
         } while (this.userRepository.existLogin(user));
     }
@@ -37,7 +45,14 @@ public class UserService {
             user = this.userMenuService.signIn();
             if (this.userRepository.exist(user)) {
                 System.out.println(Message.WELCOME.getMessage());
-                this.user = this.userRepository.readByLogin(user.getLogin()).orElseThrow(); // todo
+                try {
+                    this.user = this.userRepository
+                            .readByLogin(user.getLogin())
+                            .orElseThrow(() -> new UserException(Message.USERNAME_PASSWORD_INCORRECT.getMessage()));
+                } catch (UserException e) {
+                    System.out.println(e);
+                    System.out.println(Message.TRY_AGAIN.getMessage());
+                }
             }
             else {
                 System.out.println(Message.USERNAME_PASSWORD_INCORRECT.getMessage());

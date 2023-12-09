@@ -1,6 +1,7 @@
 package com.gmail.luchyk.viktoriia.service;
 
 import com.gmail.luchyk.viktoriia.enums.Message;
+import com.gmail.luchyk.viktoriia.exception.AccountException;
 import com.gmail.luchyk.viktoriia.model.Account;
 import com.gmail.luchyk.viktoriia.repository.dao.AccountRepository;
 import com.gmail.luchyk.viktoriia.service.menu.AccountMenuService;
@@ -22,31 +23,58 @@ public class AccountService {
         Account account;
         do {
             account = this.accountMenuService.create();
-            if (this.accountRepository.exist(account))
+            if (this.accountRepository.exist(account)) {
                 System.out.println(Message.ACCOUNT_EXISTS.getMessage());
+                break;
+            }
             else {
-                this.account = this.accountRepository.create(account).orElseThrow(); // todo
-                System.out.println(Message.ACCOUNT_CREATED_SUCCESSFULLY.getMessage());
+                try {
+                    this.account = this.accountRepository
+                            .create(account)
+                            .orElseThrow(() -> new AccountException(Message.ACCOUNT_NOT_CREATED.getMessage()));
+                    System.out.println(Message.ACCOUNT_CREATED_SUCCESSFULLY.getMessage());
+                } catch (AccountException e) {
+                    System.out.println(e);
+                    System.out.println(Message.TRY_AGAIN.getMessage());
+                }
             }
         } while (this.accountRepository.exist(account));
     }
 
     public void view() {
         this.accountMenuService.view();
-        this.account = this.accountRepository.readByUser(this.accountMenuService.getUser()).orElseThrow(); // todo
-        System.out.println(this.account);
+        try {
+            this.account = this.accountRepository
+                    .readByUser(this.accountMenuService.getUser())
+                    .orElseThrow(() -> new AccountException(Message.ACCOUNT_DOES_NOT_EXIST.getMessage()));
+            System.out.println(this.account);
+        } catch (AccountException e) {
+            System.out.println(e);
+        }
     }
 
     public void topUp() {
-        double increaseBy = this.accountMenuService.topUp();
-        this.account = this.accountRepository.readByUser(this.accountMenuService.getUser()).orElseThrow(); // todo
-        this.account.setAmount(this.account.getAmount() + increaseBy);
-        this.accountRepository.update(this.account);
-        System.out.println(Message.ACCOUNT_TOPPED_UP_SUCCESSFULLY.getMessage());
+        try {
+            this.account = this.accountRepository
+                    .readByUser(this.accountMenuService.getUser())
+                    .orElseThrow(() -> new AccountException(Message.ACCOUNT_DOES_NOT_EXIST.getMessage()));
+            double increaseBy = this.accountMenuService.topUp();
+            this.account.setAmount(this.account.getAmount() + increaseBy);
+            this.accountRepository.update(this.account);
+            System.out.println(Message.ACCOUNT_TOPPED_UP_SUCCESSFULLY.getMessage());
+        } catch (AccountException e) {
+            System.out.println(e);
+        }
     }
 
     public void next() {
-        this.accountMenuService.next();
-        this.account = this.accountRepository.readByUser(this.accountMenuService.getUser()).orElseThrow(); // todo
+        try {
+            this.accountMenuService.next();
+            this.account = this.accountRepository
+                    .readByUser(this.accountMenuService.getUser())
+                    .orElseThrow(() -> new AccountException(Message.ACCOUNT_DOES_NOT_EXIST.getMessage()));
+        } catch (AccountException e) {
+            System.out.println(e);
+        }
     }
 }

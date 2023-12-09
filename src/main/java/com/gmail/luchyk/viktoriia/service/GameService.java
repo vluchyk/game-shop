@@ -1,6 +1,7 @@
 package com.gmail.luchyk.viktoriia.service;
 
 import com.gmail.luchyk.viktoriia.enums.Message;
+import com.gmail.luchyk.viktoriia.exception.GameException;
 import com.gmail.luchyk.viktoriia.model.Account;
 import com.gmail.luchyk.viktoriia.model.Game;
 import com.gmail.luchyk.viktoriia.model.Purchase;
@@ -45,16 +46,25 @@ public class GameService {
 
     public void buy() {
         String name = this.gameMenuService.buy();
-        this.game = this.purchaseRepository.getGameRepository().readByName(name).orElseThrow(); // todo
-        this.account = this.purchaseRepository.getAccountRepository().readByUser(this.user).orElseThrow(); // todo
-        double balance = this.account.getAmount() - this.game.getCost();
-        if (balance >= 0) {
-            Purchase purchase = new Purchase(this.account.getUser(), this.game);
-            this.purchaseRepository.create(purchase);
-            this.account.setAmount(balance);
-            this.purchaseRepository.getAccountRepository().update(this.account);
-        } else {
-            System.out.println(Message.ACCOUNT_NOT_ENOUGH_MONEY.getMessage());
+        try {
+            this.game = this.purchaseRepository.getGameRepository()
+                    .readByName(name)
+                    .orElseThrow(() -> new GameException(Message.GAME_NOT_FOUND.getMessage()));
+            this.account = this.purchaseRepository.getAccountRepository()
+                    .readByUser(this.user)
+                    .orElseThrow(() -> new GameException(Message.ACCOUNT_DOES_NOT_EXIST.getMessage()));
+            double balance = this.account.getAmount() - this.game.getCost();
+            if (balance >= 0) {
+                Purchase purchase = new Purchase(this.account.getUser(), this.game);
+                this.purchaseRepository.create(purchase);
+                this.account.setAmount(balance);
+                this.purchaseRepository.getAccountRepository().update(this.account);
+            } else {
+                System.out.println(Message.ACCOUNT_NOT_ENOUGH_MONEY.getMessage());
+            }
+        } catch (GameException e) {
+            System.out.println(e);
+            System.out.println(Message.TRY_AGAIN.getMessage());
         }
     }
 

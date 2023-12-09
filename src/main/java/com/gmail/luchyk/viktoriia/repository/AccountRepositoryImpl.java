@@ -49,7 +49,6 @@ public class AccountRepositoryImpl implements AccountRepository {
     public Optional<Account> create(Account account) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS);
-
             preparedStatement.setDouble(1, account.getAmount());
             preparedStatement.setString(2, account.getType());
             preparedStatement.setInt(3, account.getUser().getId());
@@ -60,41 +59,41 @@ public class AccountRepositoryImpl implements AccountRepository {
             account.setId(generatedKeys.getInt(1));
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
         }
         return Optional.of(account);
     }
 
     @Override
     public Optional<Account> read(int id) {
+        Account account = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(READ);
-
             preparedStatement.setInt(1, id);
+
             ResultSet resultSet = preparedStatement.executeQuery();
-            resultSet.next();
+            if (resultSet.next()) {
+                Optional<User> user = new UserRepositoryImpl(connection).read(resultSet.getInt("user_id"));
 
-            Optional<User> user = new UserRepositoryImpl(connection).read(resultSet.getInt("user_id"));
-
-            Account account = Account.builder()
-                    .id(resultSet.getInt("id"))
-                    .amount(resultSet.getDouble("amount"))
-                    .type(resultSet.getString("type"))
-                    .user(user.orElse(null))
-                    .build();
-
-            return Optional.ofNullable(account);
+                account = Account.builder()
+                        .id(resultSet.getInt("id"))
+                        .amount(resultSet.getDouble("amount"))
+                        .type(resultSet.getString("type"))
+                        .user(user.orElse(null)) // todo
+                        .build();
+            }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
         }
+
+        return Optional.ofNullable(account);
     }
 
     @Override
     public int update(Account account) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
-
             preparedStatement.setDouble(1, account.getAmount());
             preparedStatement.setString(2, account.getType());
             preparedStatement.setInt(3, account.getUser().getId());
@@ -103,7 +102,8 @@ public class AccountRepositoryImpl implements AccountRepository {
             return preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
+            return 0;
         }
     }
 
@@ -116,7 +116,8 @@ public class AccountRepositoryImpl implements AccountRepository {
             return preparedStatement.execute();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
@@ -130,18 +131,19 @@ public class AccountRepositoryImpl implements AccountRepository {
             return resultSet.next();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
+            return false;
         }
     }
 
     @Override
     public Optional<Account> readByUser(User user) {
+        Account account = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_USER);
-
             preparedStatement.setInt(1, user.getId());
+
             ResultSet resultSet = preparedStatement.executeQuery();
-            Account account = null;
             
             if (resultSet.next()) {
                 account = Account.builder()
@@ -152,10 +154,10 @@ public class AccountRepositoryImpl implements AccountRepository {
                         .build();
             }
 
-            return Optional.ofNullable(account);
-
         } catch (SQLException e) {
-            throw new RuntimeException(e); // todo
+            System.out.println(e.getMessage());
         }
+
+        return Optional.ofNullable(account);
     }
 }
