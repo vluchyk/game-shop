@@ -53,8 +53,7 @@ public class UserService {
                     System.out.println(e);
                     System.out.println(Message.TRY_AGAIN.getMessage());
                 }
-            }
-            else {
+            } else {
                 System.out.println(Message.USERNAME_PASSWORD_INCORRECT.getMessage());
                 System.out.println(Message.TRY_AGAIN.getMessage());
             }

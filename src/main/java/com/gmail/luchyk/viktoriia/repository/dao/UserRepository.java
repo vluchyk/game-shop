@@ -14,6 +14,8 @@ public interface UserRepository {
     boolean delete(int id);
 
     boolean existLogin(User user);
+
     boolean exist(User user);
+
     Optional<User> readByLogin(String login);
 }

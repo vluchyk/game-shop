@@ -10,6 +10,8 @@ import com.gmail.luchyk.viktoriia.repository.PurchaseRepositoryImpl;
 import com.gmail.luchyk.viktoriia.service.menu.GameMenuService;
 import lombok.Data;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Data
@@ -54,11 +56,14 @@ public class GameService {
                     .readByUser(this.user)
                     .orElseThrow(() -> new GameException(Message.ACCOUNT_DOES_NOT_EXIST.getMessage()));
             double balance = this.account.getAmount() - this.game.getCost();
+            balance = (new BigDecimal(balance).setScale(2, RoundingMode.HALF_UP)).doubleValue();
             if (balance >= 0) {
                 Purchase purchase = new Purchase(this.account.getUser(), this.game);
                 this.purchaseRepository.create(purchase);
                 this.account.setAmount(balance);
-                this.purchaseRepository.getAccountRepository().update(this.account);
+                if (this.purchaseRepository.getAccountRepository().update(this.account) != 0) {
+                    System.out.println(Message.GAME_PURCHASED_SUCCESSFULLY.getMessage());
+                }
             } else {
                 System.out.println(Message.ACCOUNT_NOT_ENOUGH_MONEY.getMessage());
             }
@@ -68,7 +73,7 @@ public class GameService {
         }
     }
 
-    public void close() {
-
+    public void exit() {
+        System.exit(0);
     }
 }

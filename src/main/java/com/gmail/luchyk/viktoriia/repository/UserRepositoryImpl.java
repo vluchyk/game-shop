@@ -12,43 +12,43 @@ public class UserRepositoryImpl implements UserRepository {
 
     private static final String CREATE =
             """
-                INSERT INTO public.users(name, nickname, birthday, password)
-                VALUES(?,?,?,?);
-            """;
+                        INSERT INTO public.users(name, nickname, birthday, password)
+                        VALUES(?,?,?,?);
+                    """;
 
     private static final String READ =
             """
-                SELECT * FROM public.users
-                WHERE id = ?;
-            """;
+                        SELECT * FROM public.users
+                        WHERE id = ?;
+                    """;
 
     private static final String UPDATE =
             """
-                UPDATE public.users
-                SET name = ?, nickname = ?, birthday = ?, password = ?
-                WHERE id = ?;
-            """;
+                        UPDATE public.users
+                        SET name = ?, nickname = ?, birthday = ?, password = ?
+                        WHERE id = ?;
+                    """;
 
     private static final String DELETE =
             """
-                DELETE FROM public.users WHERE id = ?;
-            """;
+                        DELETE FROM public.users WHERE id = ?;
+                    """;
 
     private static final String READ_BY_NICKNAME =
             """
-                SELECT * FROM public.users
-                WHERE nickname = ?;
-            """;
+                        SELECT * FROM public.users
+                        WHERE nickname = ?;
+                    """;
 
     private static final String READ_BY_NICKNAME_PASSWORD =
             """
-                SELECT * FROM public.users
-                WHERE nickname = ? and password = ?;
-            """;
+                        SELECT * FROM public.users
+                        WHERE nickname = ? and password = ?;
+                    """;
+
     public UserRepositoryImpl(Connection connection) {
         this.connection = connection;
     }
-
 
     @Override
     public Optional<User> create(User user) {

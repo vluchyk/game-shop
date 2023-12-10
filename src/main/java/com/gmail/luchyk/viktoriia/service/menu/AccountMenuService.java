@@ -27,6 +27,7 @@ public class AccountMenuService {
         builder.user(user);
         return builder.build();
     }
+
     public void view() {
         System.out.println(Message.USER_ACCOUNT.getMessage());
     }
@@ -34,8 +35,5 @@ public class AccountMenuService {
     public double topUp() {
         System.out.println(Message.ACCOUNT_TOP_UP.getMessage());
         return scanner.nextDouble();
-    }
-
-    public void next() {
     }
 }

@@ -74,13 +74,14 @@ public class AccountRepositoryImpl implements AccountRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 Optional<User> user = new UserRepositoryImpl(connection).read(resultSet.getInt("user_id"));
-
-                account = Account.builder()
-                        .id(resultSet.getInt("id"))
-                        .amount(resultSet.getDouble("amount"))
-                        .type(resultSet.getString("type"))
-                        .user(user.orElse(null)) // todo
-                        .build();
+                if (user.isPresent()) {
+                    account = Account.builder()
+                            .id(resultSet.getInt("id"))
+                            .amount(resultSet.getDouble("amount"))
+                            .type(resultSet.getString("type"))
+                            .user(user.orElse(null))
+                            .build();
+                }
             }
 
         } catch (SQLException e) {

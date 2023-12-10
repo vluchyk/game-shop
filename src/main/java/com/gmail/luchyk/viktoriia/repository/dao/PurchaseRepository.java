@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface PurchaseRepository {
     Optional<Purchase> create(Purchase purchase);
+
     List<Purchase> read(User user);
+
     boolean delete(Purchase purchase);
 }

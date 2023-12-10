@@ -22,21 +22,21 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
 
     private static final String CREATE =
             """
-                INSERT INTO public.aux_user_game(user_id, game_id)
-                VALUES(?,?);
-            """;
+                        INSERT INTO public.aux_user_game(user_id, game_id)
+                        VALUES(?,?);
+                    """;
 
     private static final String READ =
             """
-                SELECT * FROM public.aux_user_game
-                WHERE user_id = ?;
-            """;
+                        SELECT * FROM public.aux_user_game
+                        WHERE user_id = ?;
+                    """;
 
     private static final String DELETE =
             """
-                DELETE FROM public.aux_user_game
-                WHERE user_id = ? and game_id = ?;
-            """;
+                        DELETE FROM public.aux_user_game
+                        WHERE user_id = ? and game_id = ?;
+                    """;
 
     public PurchaseRepositoryImpl(AccountRepositoryImpl accountRepository, GameRepositoryImpl gameRepository, Connection connection) {
         this.accountRepository = accountRepository;
@@ -66,11 +66,12 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Optional<Game> game = new GameRepositoryImpl(connection).read(resultSet.getInt("game_id"));
-
-                purchases.add(Purchase.builder()
-                        .user(user)
-                        .game(game.orElse(null)) // todo
-                        .build());
+                if (game.isPresent()) {
+                    purchases.add(Purchase.builder()
+                            .user(user)
+                            .game(game.orElse(null))
+                            .build());
+                }
             }
 
         } catch (SQLException e) {

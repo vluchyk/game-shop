@@ -9,10 +9,11 @@ public enum GameMenu {
     VIEW("View All Games (V)", "v"),
     VIEW_MY("View My Games (M)", "m"),
     BUY("Buy a Game (B)", "b"),
-    CLOSE_MENU("Close Menu (C)", "c");
+    CLOSE_MENU("Back to Account (A)", "a"),
+    EXIT("Exit (E)", "e");
 
-    private String action;
-    private String command;
+    private final String action;
+    private final String command;
 
     @Override
     public String toString() {

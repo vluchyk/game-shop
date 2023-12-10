@@ -29,7 +29,4 @@ public class GameMenuService {
         System.out.println(Message.GAME_TO_BUY.getMessage());
         return scanner.next();
     }
-
-    public void close() {
-    }
 }
