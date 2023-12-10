@@ -81,8 +81,8 @@ public class UserRepositoryImpl implements UserRepository {
             if (resultSet.next()) {
                 user = User.builder()
                         .id(resultSet.getInt("id"))
-                        .login(resultSet.getString("name"))
-                        .fullName(resultSet.getString("nickname"))
+                        .login(resultSet.getString("nickname"))
+                        .fullName(resultSet.getString("name"))
                         .birthDate(resultSet.getDate("birthday").toLocalDate())
                         .password(resultSet.getString("password"))
                         .build();
@@ -168,8 +168,8 @@ public class UserRepositoryImpl implements UserRepository {
             if (resultSet.next()) {
                 user = User.builder()
                         .id(resultSet.getInt("id"))
-                        .login(resultSet.getString("name"))
-                        .fullName(resultSet.getString("nickname"))
+                        .login(resultSet.getString("nickname"))
+                        .fullName(resultSet.getString("name"))
                         .birthDate(resultSet.getDate("birthday").toLocalDate())
                         .password(resultSet.getString("password"))
                         .build();

@@ -25,7 +25,7 @@ public enum Message {
     USER_ACCOUNT("User account:"),
 
     ACCOUNT_TOP_UP("Enter the amount to top up the account: "),
-    ACCOUNT_TYPE("Enter the type of the account: "),
+    ACCOUNT_TYPE("Enter the type of the account (VISA or MASTERCARD): "),
     ACCOUNT_EXISTS("An account already exists in the system."),
     ACCOUNT_DOES_NOT_EXIST("The user doesn't have an account. Please create it."),
     ACCOUNT_CREATED_SUCCESSFULLY("The account is successfully created."),
