@@ -18,6 +18,7 @@ public enum Message {
     USERNAME_PASSWORD_INCORRECT("The username or password is incorrect."),
     USER_REGISTERED_SUCCESSFULLY("The user is successfully registered."),
     USER_NOT_CREATED("The user is not created."),
+    USER_NOT_SPECIFIED("The user is not specified."),
     USER_FULL_NAME("Full Name: "),
     USERNAME("Username: "),
     USER_BIRTH_DAY("Date of Birth (dd/mm/yyyy): "),

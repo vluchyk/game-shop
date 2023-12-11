@@ -1,5 +1,6 @@
 package com.gmail.luchyk.viktoriia.repository;
 
+import com.gmail.luchyk.viktoriia.enums.Message;
 import com.gmail.luchyk.viktoriia.model.User;
 import com.gmail.luchyk.viktoriia.repository.dao.UserRepository;
 
@@ -25,8 +26,8 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String UPDATE =
             """
                         UPDATE public.users
-                        SET name = ?, nickname = ?, birthday = ?, password = ?
-                        WHERE id = ?;
+                        SET name = ?, birthday = ?, password = ?
+                        WHERE nickname = ?;
                     """;
 
     private static final String DELETE =
@@ -64,6 +65,8 @@ public class UserRepositoryImpl implements UserRepository {
             generatedKeys.next();
             user.setId(generatedKeys.getInt(1));
 
+        } catch (NullPointerException e) {
+            System.out.println(Message.USER_NOT_SPECIFIED.getMessage());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -98,11 +101,10 @@ public class UserRepositoryImpl implements UserRepository {
     public int update(User user) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
-            preparedStatement.setString(1, user.getLogin());
-            preparedStatement.setString(2, user.getFullName());
-            preparedStatement.setDate(3, Date.valueOf(user.getBirthDate()));
-            preparedStatement.setString(4, user.getPassword());
-            preparedStatement.setInt(5, user.getId());
+            preparedStatement.setString(1, user.getFullName());
+            preparedStatement.setDate(2, Date.valueOf(user.getBirthDate()));
+            preparedStatement.setString(3, user.getPassword());
+            preparedStatement.setString(4, user.getLogin());
 
             return preparedStatement.executeUpdate();
 
@@ -118,7 +120,7 @@ public class UserRepositoryImpl implements UserRepository {
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
             preparedStatement.setInt(1, id);
 
-            return preparedStatement.execute();
+            return preparedStatement.executeUpdate() != 0;
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());

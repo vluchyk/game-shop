@@ -54,7 +54,7 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return Optional.empty();
+        return Optional.of(purchase);
     }
 
     @Override
