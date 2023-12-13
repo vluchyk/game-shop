@@ -89,7 +89,9 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
             preparedStatement.setInt(1, purchase.getUser().getId());
             preparedStatement.setInt(2, purchase.getGame().getId());
-            return preparedStatement.execute();
+
+            return preparedStatement.executeUpdate() != 0;
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
