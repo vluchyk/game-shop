@@ -1,5 +1,6 @@
 package com.gmail.luchyk.viktoriia.repository;
 
+import com.gmail.luchyk.viktoriia.enums.Message;
 import com.gmail.luchyk.viktoriia.model.Account;
 import com.gmail.luchyk.viktoriia.model.User;
 import com.gmail.luchyk.viktoriia.repository.dao.AccountRepository;
@@ -58,10 +59,12 @@ public class AccountRepositoryImpl implements AccountRepository {
             generatedKeys.next();
             account.setId(generatedKeys.getInt(1));
 
+        }catch (NullPointerException e) {
+            System.out.println(Message.ACCOUNT_NOT_CREATED.getMessage());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return Optional.of(account);
+        return Optional.ofNullable(account);
     }
 
     @Override
