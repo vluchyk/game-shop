@@ -18,7 +18,12 @@ class UserRepositoryImplTest {
     private Connection connection;
     private UserRepository userRepository;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private User user = User.builder().fullName("Jane Smith").login("jsmith").password("qwerty").birthDate(LocalDate.parse("15/05/1990", formatter)).build();
+    private User user = User.builder()
+            .fullName("Jane Smith")
+            .login("jsmith")
+            .password("qwerty")
+            .birthDate(LocalDate.parse("15/05/1990", formatter))
+            .build();
 
     @BeforeEach
     public void init() throws SQLException, IOException, ClassNotFoundException {
@@ -113,7 +118,7 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    public void existLoginFailTest() {
+    public void existLoginNoneTest() {
         boolean result = userRepository.existLogin(user);
 
         Assertions.assertFalse(result);
@@ -128,7 +133,7 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    public void existFailTest() {
+    public void existNoneTest() {
         boolean result = userRepository.exist(user);
 
         Assertions.assertFalse(result);
@@ -143,7 +148,7 @@ class UserRepositoryImplTest {
     }
 
     @Test
-    public void readByLoginFailTest() {
+    public void readByLoginNoneTest() {
         User result = userRepository.readByLogin(user.getLogin()).orElse(null);
 
         Assertions.assertNull(result);

@@ -12,4 +12,8 @@ public interface PurchaseRepository {
     List<Purchase> read(User user);
 
     boolean delete(Purchase purchase);
+
+    GameRepository getGameRepository();
+
+    AccountRepository getAccountRepository();
 }

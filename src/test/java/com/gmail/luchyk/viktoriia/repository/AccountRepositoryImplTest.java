@@ -25,8 +25,17 @@ class AccountRepositoryImplTest {
     private UserRepository userRepository;
     private AccountRepository accountRepository;
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private User user = User.builder().fullName("Jane Smith").login("jsmith").password("qwerty").birthDate(LocalDate.parse("15/05/1990", formatter)).build();
-    private Account account = Account.builder().amount(500.25).type("VISA").user(user).build();
+    private User user = User.builder()
+            .fullName("Jane Smith")
+            .login("jsmith")
+            .password("qwerty")
+            .birthDate(LocalDate.parse("15/05/1990", formatter))
+            .build();
+    private Account account = Account.builder()
+            .amount(500.25)
+            .type("VISA")
+            .user(user)
+            .build();
 
     @BeforeEach
     public void init() throws SQLException, IOException, ClassNotFoundException, UserException {
@@ -122,7 +131,7 @@ class AccountRepositoryImplTest {
     }
 
     @Test
-    public void existFailTest() {
+    public void existNoneTest() {
         boolean result = accountRepository.exist(account);
 
         Assertions.assertFalse(result);
@@ -137,7 +146,7 @@ class AccountRepositoryImplTest {
     }
 
     @Test
-    public void readByUserFailTest() {
+    public void readByUserNoneTest() {
         Account result = accountRepository.readByUser(user).orElse(null);
 
         Assertions.assertNull(result);

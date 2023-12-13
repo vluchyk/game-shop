@@ -38,6 +38,7 @@ public enum Message {
     AVAILABLE_GAMES("Available games are: "),
     MY_GAMES("My games are: "),
     NO_GAMES("None"),
+    GAME_NOT_CREATED("The game is not created."),
     GAME_TO_BUY("Enter the name of the game you want to buy: "),
     GAME_NOT_FOUND("The game with such name does not exist."),
     GAME_PURCHASED_SUCCESSFULLY("The game is successfully purchased."),

@@ -1,5 +1,6 @@
 package com.gmail.luchyk.viktoriia.repository;
 
+import com.gmail.luchyk.viktoriia.enums.Message;
 import com.gmail.luchyk.viktoriia.model.Game;
 import com.gmail.luchyk.viktoriia.model.User;
 import com.gmail.luchyk.viktoriia.repository.dao.GameRepository;
@@ -72,10 +73,12 @@ public class GameRepositoryImpl implements GameRepository {
             generatedKeys.next();
             game.setId(generatedKeys.getInt(1));
 
+        } catch (NullPointerException e) {
+            System.out.println(Message.GAME_NOT_CREATED.getMessage());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return Optional.of(game);
+        return Optional.ofNullable(game);
     }
 
     @Override
@@ -113,6 +116,7 @@ public class GameRepositoryImpl implements GameRepository {
             preparedStatement.setInt(3, game.getRating());
             preparedStatement.setDouble(4, game.getCost());
             preparedStatement.setString(5, game.getDescription());
+            preparedStatement.setInt(6, game.getId());
 
             return preparedStatement.executeUpdate();
 
@@ -127,11 +131,12 @@ public class GameRepositoryImpl implements GameRepository {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
             preparedStatement.setInt(1, id);
+
+            return preparedStatement.executeUpdate() != 0;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
         }
-        return false;
     }
 
     @Override

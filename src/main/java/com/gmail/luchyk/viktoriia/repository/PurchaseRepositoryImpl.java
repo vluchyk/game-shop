@@ -3,6 +3,8 @@ package com.gmail.luchyk.viktoriia.repository;
 import com.gmail.luchyk.viktoriia.model.Game;
 import com.gmail.luchyk.viktoriia.model.Purchase;
 import com.gmail.luchyk.viktoriia.model.User;
+import com.gmail.luchyk.viktoriia.repository.dao.AccountRepository;
+import com.gmail.luchyk.viktoriia.repository.dao.GameRepository;
 import com.gmail.luchyk.viktoriia.repository.dao.PurchaseRepository;
 import lombok.Data;
 
@@ -16,8 +18,8 @@ import java.util.Optional;
 
 @Data
 public class PurchaseRepositoryImpl implements PurchaseRepository {
-    private AccountRepositoryImpl accountRepository;
-    private GameRepositoryImpl gameRepository;
+    private AccountRepository accountRepository;
+    private GameRepository gameRepository;
     private final Connection connection;
 
     private static final String CREATE =
@@ -38,7 +40,7 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
                         WHERE user_id = ? and game_id = ?;
                     """;
 
-    public PurchaseRepositoryImpl(AccountRepositoryImpl accountRepository, GameRepositoryImpl gameRepository, Connection connection) {
+    public PurchaseRepositoryImpl(AccountRepository accountRepository, GameRepository gameRepository, Connection connection) {
         this.accountRepository = accountRepository;
         this.gameRepository = gameRepository;
         this.connection = connection;

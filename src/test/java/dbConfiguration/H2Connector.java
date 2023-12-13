@@ -22,9 +22,6 @@ public class H2Connector {
         String initDB = new String(Files.readAllBytes(Paths.get("src/main/java/com/gmail/luchyk/viktoriia/ddl/init.sql")));
         statement.execute(initDB);
 
-        String insertGames = new String(Files.readAllBytes(Paths.get("src/main/java/com/gmail/luchyk/viktoriia/ddl/insert_games.sql")));
-        statement.execute(insertGames);
-
         statement.close();
     }
 }

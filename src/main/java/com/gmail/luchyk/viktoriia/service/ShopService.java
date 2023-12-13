@@ -6,6 +6,10 @@ import com.gmail.luchyk.viktoriia.repository.AccountRepositoryImpl;
 import com.gmail.luchyk.viktoriia.repository.GameRepositoryImpl;
 import com.gmail.luchyk.viktoriia.repository.PurchaseRepositoryImpl;
 import com.gmail.luchyk.viktoriia.repository.UserRepositoryImpl;
+import com.gmail.luchyk.viktoriia.repository.dao.AccountRepository;
+import com.gmail.luchyk.viktoriia.repository.dao.GameRepository;
+import com.gmail.luchyk.viktoriia.repository.dao.PurchaseRepository;
+import com.gmail.luchyk.viktoriia.repository.dao.UserRepository;
 import com.gmail.luchyk.viktoriia.service.menu.AccountMenuService;
 import com.gmail.luchyk.viktoriia.service.menu.GameMenuService;
 import com.gmail.luchyk.viktoriia.service.menu.UserMenuService;
@@ -22,20 +26,20 @@ public class ShopService {
         try {
             Connection connection = postgresqlSingleton.getConnection();
 
-            UserRepositoryImpl userRepository = new UserRepositoryImpl(connection);
+            UserRepository userRepository = new UserRepositoryImpl(connection);
             UserMenuService userMenuService = new UserMenuService(scanner);
             UserService userService = new UserService(userRepository, userMenuService);
 
             userMenuRun(userService);
 
-            AccountRepositoryImpl accountRepository = new AccountRepositoryImpl(connection);
+            AccountRepository accountRepository = new AccountRepositoryImpl(connection);
             AccountMenuService accountMenuService = new AccountMenuService(scanner, userService.getUser());
             AccountService accountService = new AccountService(accountRepository, accountMenuService);
 
-            GameRepositoryImpl gameRepository = new GameRepositoryImpl(connection);
+            GameRepository gameRepository = new GameRepositoryImpl(connection);
             GameMenuService gameMenuService = new GameMenuService(scanner);
 
-            PurchaseRepositoryImpl purchaseRepository = new PurchaseRepositoryImpl(accountRepository, gameRepository, connection);
+            PurchaseRepository purchaseRepository = new PurchaseRepositoryImpl(accountRepository, gameRepository, connection);
             GameService gameService = new GameService(purchaseRepository, gameMenuService, userService.getUser());
 
             accountMenuRun(accountService, gameService);

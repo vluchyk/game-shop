@@ -6,7 +6,7 @@ import com.gmail.luchyk.viktoriia.model.Account;
 import com.gmail.luchyk.viktoriia.model.Game;
 import com.gmail.luchyk.viktoriia.model.Purchase;
 import com.gmail.luchyk.viktoriia.model.User;
-import com.gmail.luchyk.viktoriia.repository.PurchaseRepositoryImpl;
+import com.gmail.luchyk.viktoriia.repository.dao.PurchaseRepository;
 import com.gmail.luchyk.viktoriia.service.menu.GameMenuService;
 import lombok.Data;
 
@@ -16,13 +16,13 @@ import java.util.List;
 
 @Data
 public class GameService {
-    private PurchaseRepositoryImpl purchaseRepository;
+    private PurchaseRepository purchaseRepository;
     private GameMenuService gameMenuService;
     private User user;
     private Account account;
     private Game game;
 
-    public GameService(PurchaseRepositoryImpl purchaseRepository, GameMenuService gameMenuService, User user) {
+    public GameService(PurchaseRepository purchaseRepository, GameMenuService gameMenuService, User user) {
         this.purchaseRepository = purchaseRepository;
         this.gameMenuService = gameMenuService;
         this.user = user;
