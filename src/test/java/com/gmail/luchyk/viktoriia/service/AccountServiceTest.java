@@ -81,7 +81,7 @@ public class AccountServiceTest {
 
         systemIn.provideLines(account.getType());
         accountService.create();
-        String menuText = "Full Name: Username: Date of Birth (dd/mm/yyyy): Password: The user is successfully registered.\r\n";
+        String menuText = displayUserMenuText();
         menuText += Message.ACCOUNT_TYPE.getMessage() + "\r\n";
 
         Account result = accountRepository.read(account.getId()).orElseThrow();
@@ -96,7 +96,7 @@ public class AccountServiceTest {
         accountService.create();
         systemIn.provideLines(account.getType());
         accountService.create();
-        String menuText = "Full Name: Username: Date of Birth (dd/mm/yyyy): Password: The user is successfully registered.\r\n";
+        String menuText = displayUserMenuText();
         menuText += Message.ACCOUNT_TYPE.getMessage() + "\r\n";
         menuText += Message.ACCOUNT_CREATED_SUCCESSFULLY.getMessage() + "\r\n";
         menuText += Message.ACCOUNT_TYPE.getMessage() + "\r\n";
@@ -113,7 +113,7 @@ public class AccountServiceTest {
         accountService.create();
         accountService.view();
 
-        String menuText = "Full Name: Username: Date of Birth (dd/mm/yyyy): Password: The user is successfully registered.\r\n";
+        String menuText = displayUserMenuText();
         menuText += Message.ACCOUNT_TYPE.getMessage() + "\r\n";
         menuText += Message.ACCOUNT_CREATED_SUCCESSFULLY.getMessage() + "\r\n";
         menuText += Message.USER_ACCOUNT.getMessage() + "\r\n";
@@ -124,7 +124,7 @@ public class AccountServiceTest {
     @Test
     public void viewNoneTest() {
         accountService.view();
-        String menuText = "Full Name: Username: Date of Birth (dd/mm/yyyy): Password: The user is successfully registered.\r\n";
+        String menuText = displayUserMenuText();
         menuText += Message.USER_ACCOUNT.getMessage() + "\r\n";
         menuText += "com.gmail.luchyk.viktoriia.exception.AccountException: ";
 
@@ -145,5 +145,15 @@ public class AccountServiceTest {
         Account result = accountRepository.read(account.getId()).orElseThrow();
 
         Assert.assertEquals(account, result);
+    }
+
+    private String displayUserMenuText() {
+        StringBuilder menuText = new StringBuilder();
+        menuText.append(Message.USER_FULL_NAME.getMessage());
+        menuText.append(Message.USERNAME.getMessage());
+        menuText.append(Message.USER_BIRTH_DAY.getMessage());
+        menuText.append(Message.USER_PASSWORD.getMessage());
+        menuText.append(Message.USER_REGISTERED_SUCCESSFULLY.getMessage()).append("\r\n");
+        return menuText.toString();
     }
 }

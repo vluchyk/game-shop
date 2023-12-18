@@ -12,6 +12,7 @@ import com.gmail.luchyk.viktoriia.repository.dao.AccountRepository;
 import com.gmail.luchyk.viktoriia.repository.dao.GameRepository;
 import com.gmail.luchyk.viktoriia.repository.dao.PurchaseRepository;
 import com.gmail.luchyk.viktoriia.repository.dao.UserRepository;
+import com.gmail.luchyk.viktoriia.service.menu.AccountMenuService;
 import com.gmail.luchyk.viktoriia.service.menu.GameMenuService;
 import com.gmail.luchyk.viktoriia.service.menu.UserMenuService;
 import dbConfiguration.H2Connector;
@@ -41,6 +42,8 @@ public class GameServiceTest {
     private UserMenuService userMenuService;
     private UserService userService;
     private AccountRepository accountRepository;
+    private AccountMenuService accountMenuService;
+    private AccountService accountService;
     private GameRepository gameRepository;
     private PurchaseRepository purchaseRepository;
     private GameMenuService gameMenuService;
@@ -59,10 +62,10 @@ public class GameServiceTest {
             .build();
     private Game game = Game.builder()
             .name("Tetris")
-            .released(LocalDate.parse("11/05/1998", formatter))
+            .released(LocalDate.parse("25/02/2000", formatter))
             .rating(10)
-            .cost(10.25)
-            .description("The description of the Tetris.")
+            .cost(1.25)
+            .description("Description of the Tetris")
             .build();
 
     @Rule
@@ -80,7 +83,13 @@ public class GameServiceTest {
         userMenuService = new UserMenuService(scanner);
         userService = new UserService(userRepository, userMenuService);
 
+        systemIn.provideLines(user.getFullName(), user.getLogin(), user.getBirthDate().format(formatter), user.getPassword());
+        userService.register();
+
         accountRepository = new AccountRepositoryImpl(connection);
+        accountMenuService = new AccountMenuService(scanner, userService.getUser());
+        accountService = new AccountService(accountRepository, accountMenuService);
+
         gameRepository = new GameRepositoryImpl(connection);
         purchaseRepository = new PurchaseRepositoryImpl(accountRepository, gameRepository, connection);
 
@@ -109,11 +118,154 @@ public class GameServiceTest {
         expected.add(Game.builder().id(5).name("Doom").released(LocalDate.parse("13/04/1995", formatter)).rating(10).cost(1.15).description("Description of the Doom").build());
 
         gameService.view();
-        StringBuilder menuText = new StringBuilder(Message.AVAILABLE_GAMES.getMessage());
+        StringBuilder menuText = new StringBuilder();
+        menuText.append(displayUserMenuText());
+        menuText.append(Message.AVAILABLE_GAMES.getMessage());
         for (Game each : expected) {
             menuText.append("\r\n").append(each.toString());
         }
 
         Assert.assertEquals(menuText.toString(), systemOutRule.getLog().trim());
+    }
+
+    @Test
+    public void viewMyTest() {
+        account.setId(1);
+        account.getUser().setId(1);
+        game.setId(2);
+
+        systemIn.provideLines(account.getType());
+        accountService.create();
+        systemIn.provideLines(String.valueOf(150.25));
+        accountService.topUp();
+        systemIn.provideLines(game.getName());
+        gameService.buy();
+        gameService.viewMy();
+        StringBuilder menuText = new StringBuilder();
+        menuText.append(displayUserMenuText());
+        menuText.append(displayAccountMenuText());
+        menuText.append(displayPurchaseMenuText()).append("\r\n");
+        menuText.append(Message.MY_GAMES.getMessage()).append("\r\n");
+        menuText.append(game.toString());
+
+        Assert.assertEquals(menuText.toString(), systemOutRule.getLog().trim());
+    }
+
+    @Test
+    public void viewMyNoneTest() {
+        gameService.viewMy();
+        StringBuilder menuText = new StringBuilder();
+        menuText.append(displayUserMenuText());
+        menuText.append(Message.MY_GAMES.getMessage()).append("\r\n");
+        menuText.append(Message.NO_GAMES.getMessage());
+
+        Assert.assertEquals(menuText.toString(), systemOutRule.getLog().trim());
+    }
+
+    @Test
+    public void buyTest() {
+        account.setId(1);
+        account.getUser().setId(1);
+
+        systemIn.provideLines(account.getType());
+        accountService.create();
+        systemIn.provideLines(String.valueOf(150.25));
+        accountService.topUp();
+        systemIn.provideLines(game.getName());
+        gameService.buy();
+        StringBuilder menuText = new StringBuilder();
+        menuText.append(displayUserMenuText());
+        menuText.append(displayAccountMenuText());
+        menuText.append(displayPurchaseMenuText());
+
+        Assert.assertEquals(menuText.toString(), systemOutRule.getLog().trim());
+    }
+
+    @Test
+    public void buyNotEnoughMoneyTest() {
+        account.setId(1);
+        account.getUser().setId(1);
+
+        systemIn.provideLines(account.getType());
+        accountService.create();
+        systemIn.provideLines(String.valueOf(0.5));
+        accountService.topUp();
+        systemIn.provideLines(game.getName());
+        gameService.buy();
+        StringBuilder menuText = new StringBuilder();
+        menuText.append(displayUserMenuText());
+        menuText.append(displayAccountMenuText());
+        menuText.append(Message.GAME_TO_BUY.getMessage()).append("\r\n");
+        menuText.append(Message.ACCOUNT_NOT_ENOUGH_MONEY.getMessage());
+
+        Assert.assertEquals(menuText.toString(), systemOutRule.getLog().trim());
+    }
+
+    @Test
+    public void buyGameNotFoundTest() {
+        account.setId(1);
+        account.getUser().setId(1);
+
+        systemIn.provideLines(account.getType());
+        accountService.create();
+        systemIn.provideLines(String.valueOf(0.5));
+        accountService.topUp();
+        systemIn.provideLines("Angel");
+        gameService.buy();
+        StringBuilder menuText = new StringBuilder();
+        menuText.append(displayUserMenuText());
+        menuText.append(displayAccountMenuText());
+        menuText.append(Message.GAME_TO_BUY.getMessage()).append("\r\n");
+        menuText.append("com.gmail.luchyk.viktoriia.exception.GameException: ");
+        menuText.append(Message.GAME_NOT_FOUND.getMessage()).append("\r\n");
+        menuText.append(Message.TRY_AGAIN.getMessage());
+
+        Assert.assertEquals(menuText.toString(), systemOutRule.getLog().trim());
+    }
+
+    @Test
+    public void buyAccountDoesNotExistTest() {
+        account.setId(1);
+        account.getUser().setId(1);
+
+        systemIn.provideLines(String.valueOf(0.5));
+        accountService.topUp();
+        systemIn.provideLines(game.getName());
+        gameService.buy();
+        StringBuilder menuText = new StringBuilder();
+        menuText.append(displayUserMenuText());
+        menuText.append("com.gmail.luchyk.viktoriia.exception.AccountException: ").append(Message.ACCOUNT_DOES_NOT_EXIST.getMessage()).append("\r\n");
+        menuText.append(Message.GAME_TO_BUY.getMessage()).append("\r\n");
+        menuText.append("com.gmail.luchyk.viktoriia.exception.GameException: ");
+        menuText.append(Message.ACCOUNT_DOES_NOT_EXIST.getMessage()).append("\r\n");
+        menuText.append(Message.TRY_AGAIN.getMessage());
+
+        Assert.assertEquals(menuText.toString(), systemOutRule.getLog().trim());
+    }
+
+    private String displayUserMenuText() {
+        StringBuilder menuText = new StringBuilder();
+        menuText.append(Message.USER_FULL_NAME.getMessage());
+        menuText.append(Message.USERNAME.getMessage());
+        menuText.append(Message.USER_BIRTH_DAY.getMessage());
+        menuText.append(Message.USER_PASSWORD.getMessage());
+        menuText.append(Message.USER_REGISTERED_SUCCESSFULLY.getMessage()).append("\r\n");
+        return menuText.toString();
+    }
+
+    private String displayAccountMenuText() {
+        StringBuilder menuText = new StringBuilder();
+        menuText.append(Message.ACCOUNT_TYPE.getMessage()).append("\r\n");
+        menuText.append(Message.ACCOUNT_CREATED_SUCCESSFULLY.getMessage()).append("\r\n");
+        menuText.append(Message.ACCOUNT_TOP_UP.getMessage()).append("\r\n");
+        menuText.append(Message.ACCOUNT_TOPPED_UP_SUCCESSFULLY.getMessage()).append("\r\n");
+        return menuText.toString();
+    }
+
+    private String displayPurchaseMenuText() {
+        StringBuilder menuText = new StringBuilder();
+        menuText.append(Message.GAME_TO_BUY.getMessage()).append("\r\n");
+        menuText.append(Message.GAME_PURCHASED_SUCCESSFULLY.getMessage());
+        return menuText.toString();
     }
 }
