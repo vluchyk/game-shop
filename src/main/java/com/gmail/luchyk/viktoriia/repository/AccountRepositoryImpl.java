@@ -16,31 +16,31 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     private static final String CREATE =
             """
-                INSERT INTO public.accounts(amount, type, user_id)
-                VALUES(?,?,?);
-            """;
+                        INSERT INTO public.accounts(amount, type, user_id)
+                        VALUES(?,?,?);
+                    """;
 
     private static final String READ =
             """
-                SELECT * FROM public.accounts WHERE id = ?;
-            """;
+                        SELECT * FROM public.accounts WHERE id = ?;
+                    """;
 
     private static final String UPDATE =
             """
-                UPDATE public.accounts
-                SET amount = ?, type = ?, user_id = ?
-                WHERE id = ?;
-            """;
+                        UPDATE public.accounts
+                        SET amount = ?, type = ?, user_id = ?
+                        WHERE id = ?;
+                    """;
 
     private static final String DELETE =
             """
-                DELETE FROM public.accounts WHERE id = ?;
-            """;
+                        DELETE FROM public.accounts WHERE id = ?;
+                    """;
 
     private static final String READ_BY_USER =
             """
-                SELECT * FROM public.accounts WHERE user_id = ?;
-            """;
+                        SELECT * FROM public.accounts WHERE user_id = ?;
+                    """;
 
     public AccountRepositoryImpl(Connection connection) {
         this.connection = connection;
@@ -59,7 +59,7 @@ public class AccountRepositoryImpl implements AccountRepository {
             generatedKeys.next();
             account.setId(generatedKeys.getInt(1));
 
-        }catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             System.out.println(Message.ACCOUNT_NOT_CREATED.getMessage());
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -148,7 +148,7 @@ public class AccountRepositoryImpl implements AccountRepository {
             preparedStatement.setInt(1, user.getId());
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            
+
             if (resultSet.next()) {
                 account = Account.builder()
                         .id(resultSet.getInt("id"))
