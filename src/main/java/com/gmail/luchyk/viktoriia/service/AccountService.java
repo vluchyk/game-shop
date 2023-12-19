@@ -7,6 +7,9 @@ import com.gmail.luchyk.viktoriia.repository.dao.AccountRepository;
 import com.gmail.luchyk.viktoriia.service.menu.AccountMenuService;
 import lombok.Data;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 @Data
 public class AccountService {
     private AccountRepository accountRepository;
@@ -54,7 +57,7 @@ public class AccountService {
                     .readByUser(this.accountMenuService.getUser())
                     .orElseThrow(() -> new AccountException(Message.ACCOUNT_DOES_NOT_EXIST.getMessage()));
             double increaseBy = this.accountMenuService.topUp();
-            this.account.setAmount(this.account.getAmount() + increaseBy);
+            this.account.setAmount((new BigDecimal(this.account.getAmount() + increaseBy).setScale(2, RoundingMode.HALF_UP)).doubleValue());
             if (this.accountRepository.update(this.account) != 0)
                 System.out.println(Message.ACCOUNT_TOPPED_UP_SUCCESSFULLY.getMessage());
         } catch (AccountException e) {

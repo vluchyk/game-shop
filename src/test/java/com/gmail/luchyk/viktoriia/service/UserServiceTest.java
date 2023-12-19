@@ -64,20 +64,6 @@ public class UserServiceTest {
         Assert.assertTrue(result);
     }
 
-
-    /*
-    @Test
-    public void registerExistingTest() throws UserException {
-        User result = userRepository.create(user).orElseThrow(() -> new UserException(Message.USER_NOT_CREATED.getMessage()));
-        systemIn.provideLines(user.getFullName(), user.getLogin(), user.getBirthDate().format(formatter), user.getPassword());
-        userService.register();
-        String menuText = "Full Name: Username: Date of Birth (dd/mm/yyyy): Password: ";
-
-        Assert.assertEquals(menuText + Message.USERNAME_EXISTS.getMessage(), systemOutRule.getLog().trim());
-    }
-     */
-
-
     @Test
     public void loginTest() throws UserException {
         userRepository.create(user).orElseThrow(() -> new UserException(Message.USER_NOT_CREATED.getMessage()));
@@ -87,5 +73,4 @@ public class UserServiceTest {
 
         Assert.assertEquals(menuText + Message.WELCOME.getMessage(), systemOutRule.getLog().trim());
     }
-
 }
