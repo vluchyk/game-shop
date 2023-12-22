@@ -48,8 +48,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public Optional<Account> create(Account account) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setDouble(1, account.getAmount());
             preparedStatement.setString(2, account.getType());
             preparedStatement.setInt(3, account.getUser().getId());
@@ -70,8 +69,7 @@ public class AccountRepositoryImpl implements AccountRepository {
     @Override
     public Optional<Account> read(int id) {
         Account account = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(READ);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(READ)) {
             preparedStatement.setInt(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -96,8 +94,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public int update(Account account) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)) {
             preparedStatement.setDouble(1, account.getAmount());
             preparedStatement.setString(2, account.getType());
             preparedStatement.setInt(3, account.getUser().getId());
@@ -113,8 +110,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public boolean delete(int id) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE)) {
             preparedStatement.setInt(1, id);
 
             return preparedStatement.execute();
@@ -127,8 +123,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
     @Override
     public boolean exist(Account account) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_USER);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_USER)) {
             preparedStatement.setInt(1, account.getUser().getId());
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -143,8 +138,7 @@ public class AccountRepositoryImpl implements AccountRepository {
     @Override
     public Optional<Account> readByUser(User user) {
         Account account = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_USER);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_USER)) {
             preparedStatement.setInt(1, user.getId());
 
             ResultSet resultSet = preparedStatement.executeQuery();

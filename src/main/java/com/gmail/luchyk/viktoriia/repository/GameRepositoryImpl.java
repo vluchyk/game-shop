@@ -60,8 +60,7 @@ public class GameRepositoryImpl implements GameRepository {
 
     @Override
     public Optional<Game> create(Game game) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, game.getName());
             preparedStatement.setDate(2, Date.valueOf(game.getReleased()));
             preparedStatement.setInt(3, game.getRating());
@@ -84,8 +83,7 @@ public class GameRepositoryImpl implements GameRepository {
     @Override
     public Optional<Game> read(int id) {
         Game game = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(READ);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(READ)) {
             preparedStatement.setInt(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -109,8 +107,7 @@ public class GameRepositoryImpl implements GameRepository {
 
     @Override
     public int update(Game game) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)) {
             preparedStatement.setString(1, game.getName());
             preparedStatement.setDate(2, Date.valueOf(game.getReleased()));
             preparedStatement.setInt(3, game.getRating());
@@ -128,8 +125,7 @@ public class GameRepositoryImpl implements GameRepository {
 
     @Override
     public boolean delete(int id) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE)) {
             preparedStatement.setInt(1, id);
 
             return preparedStatement.executeUpdate() != 0;
@@ -142,8 +138,7 @@ public class GameRepositoryImpl implements GameRepository {
     @Override
     public List<Game> readAll() {
         List<Game> games = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(READ_ALL);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(READ_ALL)) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -167,8 +162,7 @@ public class GameRepositoryImpl implements GameRepository {
     @Override
     public List<Game> readBy(User user) {
         List<Game> games = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_USER);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_USER)) {
             preparedStatement.setInt(1, user.getId());
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -191,8 +185,7 @@ public class GameRepositoryImpl implements GameRepository {
 
     @Override
     public Optional<Game> readByName(String name) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NAME);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NAME)) {
             preparedStatement.setString(1, name);
 
             ResultSet resultSet = preparedStatement.executeQuery();

@@ -48,8 +48,7 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
 
     @Override
     public Optional<Purchase> create(Purchase purchase) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(CREATE);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(CREATE)) {
             preparedStatement.setInt(1, purchase.getUser().getId());
             preparedStatement.setInt(2, purchase.getGame().getId());
             preparedStatement.executeUpdate();
@@ -62,8 +61,7 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
     @Override
     public List<Purchase> read(User user) {
         List<Purchase> purchases = new ArrayList<>();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(READ);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(READ)) {
             preparedStatement.setInt(1, user.getId());
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
@@ -85,8 +83,7 @@ public class PurchaseRepositoryImpl implements PurchaseRepository {
 
     @Override
     public boolean delete(Purchase purchase) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE)) {
             preparedStatement.setInt(1, purchase.getUser().getId());
             preparedStatement.setInt(2, purchase.getGame().getId());
 

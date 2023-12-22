@@ -53,8 +53,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> create(User user) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, user.getFullName());
             preparedStatement.setString(2, user.getLogin());
             preparedStatement.setDate(3, Date.valueOf(user.getBirthDate()));
@@ -76,8 +75,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> read(int id) {
         User user = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(READ);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(READ)) {
             preparedStatement.setInt(1, id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -99,8 +97,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public int update(User user) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)) {
             preparedStatement.setString(1, user.getFullName());
             preparedStatement.setDate(2, Date.valueOf(user.getBirthDate()));
             preparedStatement.setString(3, user.getPassword());
@@ -116,8 +113,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean delete(int id) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE)) {
             preparedStatement.setInt(1, id);
 
             return preparedStatement.executeUpdate() != 0;
@@ -130,8 +126,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean existLogin(User user) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NICKNAME);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NICKNAME)) {
             preparedStatement.setString(1, user.getLogin());
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -145,8 +140,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public boolean exist(User user) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NICKNAME_PASSWORD);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NICKNAME_PASSWORD)) {
             preparedStatement.setString(1, user.getLogin());
             preparedStatement.setString(2, user.getPassword());
 
@@ -162,8 +156,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> readByLogin(String login) {
         User user = null;
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NICKNAME);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_NICKNAME)) {
             preparedStatement.setString(1, login);
 
             ResultSet resultSet = preparedStatement.executeQuery();
